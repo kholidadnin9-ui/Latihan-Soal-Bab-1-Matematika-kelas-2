@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kuis Matematika Islami: Ayo Membilang 1-50</title>
+    <!-- Tailwind CSS for layout and basic styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Fredoka One (for game-like title) & Nunito (for readable text) -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            /* Background color based on the dark purple in "tema kayu.jpg" */
+            background-color: #2c1b4d; 
+            color: #333;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+            background-image: radial-gradient(circle at center, #4b3080 0%, #22133b 100%);
+        }
+
+        h1, h2, h3, .game-font {
+            font-family: 'Fredoka One', cursive;
+            letter-spacing: 1px;
+        }
+
+        .wood-panel {
+            background-color: #e3b784; /* Lighter wood base from reference */
+            border: 8px solid #a46332; /* Stronger border color */
+            border-radius: 12px;
+            box-shadow: 
+                inset 0 0 10px rgba(139, 69, 19, 0.4), /* Inner shadow */
+                8px 8px 15px rgba(0,0,0,0.6); /* Outer drop shadow */
+            position: relative;
+            /* Adding a subtle vertical grain texture */
+            background-image: repeating-linear-gradient(
+                90deg,
+                transparent,
+                transparent 15px,
+                rgba(164, 99, 50, 0.1) 15px,
+                rgba(164, 99, 50, 0.1) 30px
+            );
+        }
+
+        /* Wood panel inner border effect */
+        .wood-panel::before {
+            content: '';
+            position: absolute;
+            top: 4px; left: 4px; right: 4px; bottom: 4px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 6px;
+            pointer-events: none;
+        }
+
+        .ribbon {
+            background-color: #4CAF50; /* Green ribbon */
+            color: white;
+            padding: 8px 40px;
+            border-radius: 20px;
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.4);
+            text-transform: uppercase;
+            font-size: 1.8rem;
+            white-space: nowrap;
+            border: 4px solid #388E3C;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.3);
+        }
+
+        /* Ribbon folds at the ends */
+        .ribbon::after, .ribbon::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 30px;
+            height: 40px;
+            background-color: #2E7D32; /* Darker shade for folded look */
+            z-index: -1;
+            border-radius: 5px;
+        }
+        .ribbon::before {
+            left: -15px;
+            box-shadow: inset -5px 0 10px rgba(0,0,0,0.3);
+        }
+        .ribbon::after {
+            right: -15px;
+            box-shadow: inset 5px 0 10px rgba(0,0,0,0.3);
+        }
+
+        .ribbon.blue {
+            background-color: #00BFFF;
+            border-color: #008CBA;
+        }
+        .ribbon.blue::after, .ribbon.blue::before { background-color: #007399; }
+
+        .ribbon.pink {
+            background-color: #FF1493;
+            border-color: #C71585;
+        }
+        .ribbon.pink::after, .ribbon.pink::before { background-color: #991066; }
+
+
+        .btn-wood {
+            background-color: #00BFFF; /* Default to blue style */
+            border: 3px solid #E0FFFF; /* Light inner border */
+            border-radius: 25px; /* Pill shape */
+            color: white;
+            font-family: 'Fredoka One', cursive;
+            padding: 12px 25px;
+            cursor: pointer;
+            transition: all 0.1s;
+            /* Box shadow creates the 3D button edge */
+            box-shadow: 
+                0 6px 0 #007399, /* Bottom edge */
+                0 8px 10px rgba(0,0,0,0.4); /* Drop shadow */
+            position: relative;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.3);
+            text-transform: uppercase;
+        }
+
+        .btn-wood:hover {
+            filter: brightness(1.1);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 0 #007399, 0 10px 12px rgba(0,0,0,0.4);
+        }
+
+        .btn-wood:active {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #007399, 0 3px 5px rgba(0,0,0,0.4);
+        }
+        
+        .btn-wood:disabled {
+            filter: grayscale(0.5);
+            cursor: not-allowed;
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #007399;
+        }
+
+        /* Green Button Variation */
+        .btn-green {
+            background-color: #7ED321;
+            border-color: #F0FFF0;
+            box-shadow: 0 6px 0 #417505, 0 8px 10px rgba(0,0,0,0.4);
+        }
+        .btn-green:hover { box-shadow: 0 8px 0 #417505, 0 10px 12px rgba(0,0,0,0.4); }
+        .btn-green:active { box-shadow: 0 2px 0 #417505; }
+        .btn-green:disabled { box-shadow: 0 2px 0 #417505; }
+
+        /* Options grid */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .screen {
+            display: none;
+            animation: popIn 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            width: 100%;
+            max-width: 500px; 
+            padding: 20px;
+        }
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        .pulse-anim {
+            animation: pulse 2s infinite;
+        }
+
+        .paper-content {
+            background-color: rgba(255, 255, 255, 0.85); /* Semi-transparent white inside wood */
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 35px; /* space for ribbon */
+            border: 2px dashed #a46332;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .islamic-quote {
+            font-style: italic;
+            color: #417505;
+            text-align: center;
+            font-size: 0.95rem;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px dashed #a46332;
+        }
+
+        .question-text {
+            font-size: 1.25rem;
+            font-weight: bold;
+            color: #3e2723;
+            text-align: center;
+            margin-bottom: 15px;
+            line-height: 1.4;
+        }
+
+        .feedback-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+        }
+        .feedback-box {
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 80%;
+            border: 8px solid #fff;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            animation: popIn 0.3s ease-out forwards;
+        }
+        .feedback-box.correct { border-color: #7ED321; }
+        .feedback-box.wrong { border-color: #FF4500; }
+        
+        .feedback-icon {
+            font-size: 5rem;
+            margin-bottom: 10px;
+        }
+        .feedback-box.correct .feedback-icon { color: #7ED321; }
+        .feedback-box.wrong .feedback-icon { color: #FF4500; }
+
+        .progress-container {
+            width: 100%;
+            background-color: rgba(255,255,255,0.5);
+            border-radius: 10px;
+            margin-bottom: 15px;
+            height: 18px;
+            overflow: hidden;
+            border: 2px solid #8b4513;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .progress-bar {
+            height: 100%;
+            background-image: linear-gradient(45deg, #7ED321 25%, #689f38 25%, #689f38 50%, #7ED321 50%, #7ED321 75%, #689f38 75%, #689f38 100%);
+            background-size: 20px 20px;
+            width: 0%;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            animation: moveStripes 1s linear infinite;
+        }
+        @keyframes moveStripes {
+            0% { background-position: 0 0; }
+            100% { background-position: 20px 0; }
+        }
+        
+        .inner-padding {
+            padding: 25px 15px 15px 15px;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div id="game-container" class="w-full max-w-md mx-auto p-4">
+
+        <div id="start-screen" class="screen active wood-panel">
+            <div class="ribbon">MATEMATIKA</div>
+            
+            <div class="inner-padding flex flex-col items-center">
+                <div class="paper-content w-full text-center">
+                    <p class="islamic-quote">"Barangsiapa menempuh jalan untuk menuntut ilmu, maka Allah akan mudahkan baginya jalan menuju surga."<br>(HR. Muslim)</p>
+                    
+                    <h2 class="game-font text-3xl text-amber-900 mb-2 mt-4" style="text-shadow: 1px 1px 0px white;">AYO MEMBILANG 1-50</h2>
+                    <p class="mb-4 text-sm font-semibold text-gray-700">Tantang dirimu dengan 15 soal menarik, termasuk soal cerita dan HOTS!</p>
+                    
+                    <div class="flex justify-center space-x-5 mb-6 text-5xl">
+                        <i class="fa-solid fa-apple-whole text-red-500 pulse-anim" style="filter: drop-shadow(2px 4px 4px rgba(0,0,0,0.3));"></i>
+                        <i class="fa-solid fa-star text-yellow-500 pulse-anim" style="animation-delay: 0.2s; filter: drop-shadow(2px 4px 4px rgba(0,0,0,0.3));"></i>
+                        <i class="fa-solid fa-moon text-blue-500 pulse-anim" style="animation-delay: 0.4s; filter: drop-shadow(2px 4px 4px rgba(0,0,0,0.3));"></i>
+                    </div>
+
+                    <button onclick="startGame()" class="btn-wood btn-green text-xl w-full py-4 mt-2">
+                        <i class="fa-solid fa-play mr-2"></i> MULAI BELAJAR
+                    </button>
+                    <p class="text-xs font-bold text-gray-500 mt-3 uppercase tracking-wider">Awali dengan Bismillah</p>
+                </div>
+                
+                <!-- Added Creator Credit -->
+                <p class="mt-6 text-sm font-bold" style="color: #e3b784; text-shadow: 1px 1px 2px rgba(0,0,0,0.8);">Created by: Widodo guru sd</p>
+            </div>
+        </div>
+
+        <div id="game-screen" class="screen wood-panel">
+            <div class="ribbon blue" id="level-indicator">SOAL 1/15</div>
+            
+            <div class="inner-padding">
+                <div class="progress-container mt-8">
+                    <div id="progress-bar" class="progress-bar"></div>
+                </div>
+
+                <div class="paper-content w-full mt-2">
+                    <div id="question-container">
+                        <div id="visual-aid" class="text-center mb-4 text-3xl flex flex-wrap justify-center gap-2"></div>
+                        <div id="question-text" class="question-text">Memuat pertanyaan...</div>
+                    </div>
+
+                    <div id="options-container" class="options-grid">
+                        <!-- Options will be injected here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="result-screen" class="screen wood-panel">
+            <div class="ribbon pink">ALHAMDULILLAH</div>
+            
+            <div class="inner-padding flex flex-col items-center">
+                <div class="paper-content w-full text-center mt-6">
+                    <h2 class="game-font text-2xl text-amber-900 mb-2">Skor Akhir Kamu:</h2>
+                    <div class="text-7xl game-font text-green-600 mb-4 drop-shadow-md" id="final-score">0</div>
+                    
+                    <p id="result-message" class="text-xl font-bold mb-4"></p>
+                    <p class="islamic-quote">"Dan bertawakkallah kepada Allah. Dan cukuplah Allah sebagai Pemelihara." (QS. Al-Ahzab: 3)</p>
+
+                    <button onclick="restartGame()" class="btn-wood text-xl w-full py-4 mt-4">
+                        <i class="fa-solid fa-rotate-right mr-2"></i> MAIN LAGI
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="feedback-modal" class="feedback-overlay">
+        <div id="feedback-box" class="feedback-box">
+            <div id="feedback-icon" class="feedback-icon"></div>
+            <h2 id="feedback-title" class="game-font text-3xl mb-3"></h2>
+            <p id="feedback-explanation" class="text-lg font-semibold text-gray-700"></p>
+        </div>
+    </div>
+
+<script>
+    const questions = [
+        // Basic Competency Questions
+        {
+            type: 'text',
+            question: 'Lambang bilangan dari "tiga puluh tujuh" adalah...',
+            options: ['37', '73', '307', '703'],
+            answer: 0,
+            explanation: 'Tiga puluh tujuh ditulis dengan angka 3 di depan (puluhan) dan 7 di belakang (satuan).'
+        },
+        {
+            type: 'text',
+            question: 'Bilangan "45" dibaca...',
+            options: ['Empat lima', 'Lima puluh empat', 'Empat puluh lima', 'Empat nol lima'],
+            answer: 2,
+            explanation: 'Angka 4 di depan adalah puluhan (empat puluh), angka 5 di belakang adalah satuan (lima).'
+        },
+        {
+            type: 'text',
+            question: 'Bentuk panjang dari 28 adalah...',
+            options: ['2 + 8', '20 + 80', '80 + 2', '20 + 8'],
+            answer: 3,
+            explanation: '28 terdiri dari 2 puluhan (20) ditambah 8 satuan.'
+        },
+        {
+            type: 'comparison',
+            question: 'Bandingkan bilangan berikut: 34 ... 39',
+            options: ['Lebih dari (>)', 'Kurang dari (<)', 'Sama dengan (=)'],
+            answer: 1,
+            explanation: 'Puluhannya sama (3). Bandingkan satuannya: 4 kurang dari 9. Jadi 34 < 39.'
+        },
+        {
+            type: 'sequence',
+            question: 'Lengkapi urutan ini: 41, 42, ..., 44, 45',
+            options: ['40', '43', '46', '33'],
+            answer: 1,
+            explanation: 'Setelah 42, bilangan selanjutnya adalah 43.'
+        },
+        
+        // Visual / Estimation Questions
+        {
+            type: 'visual-count',
+            question: 'Berapa perkiraan jumlah bintang ini?',
+            visualIcon: '<i class="fa-solid fa-star text-yellow-500 text-2xl"></i>',
+            visualCount: 22, 
+            options: ['Sekitar 10', 'Sekitar 20', 'Sekitar 30', 'Sekitar 40'],
+            answer: 1,
+            explanation: 'Jika dikelompokkan, jumlahnya mendekati 20. (Jumlah pastinya 22).'
+        },
+        {
+            type: 'visual-count',
+            question: 'Perkirakan jumlah kurma (lingkaran cokelat) di bawah ini!',
+            visualIcon: '<i class="fa-solid fa-circle text-amber-800 text-xl"></i>',
+            visualCount: 38,
+            options: ['Sekitar 20', 'Sekitar 30', 'Sekitar 40', 'Sekitar 50'],
+            answer: 2,
+            explanation: 'Jumlahnya cukup banyak, hampir memenuhi 4 kelompok puluhan. Perkiraan terbaik adalah 40. (Jumlah asli 38).'
+        },
+
+        // Word Problems / Contextual
+        {
+            type: 'text',
+            question: 'Fatimah menghafal surah pendek. Ia sudah menghafal 15 surah. Hari ini ia menambah 4 surah lagi. Berapa total surah yang dihafal Fatimah sekarang?',
+            options: ['18', '19', '20', '21'],
+            answer: 1,
+            explanation: '15 ditambah 4 sama dengan 19.'
+        },
+        {
+            type: 'text',
+            question: 'Ahmad bersedekah 25 buku Iqra. Umar bersedekah 32 buku Iqra. Siapakah yang bersedekah lebih banyak?',
+            options: ['Ahmad', 'Umar', 'Keduanya sama', 'Tidak tahu'],
+            answer: 1,
+            explanation: '32 lebih besar dari 25, karena 3 puluhan lebih besar dari 2 puluhan. Jadi Umar bersedekah lebih banyak.'
+        },
+        {
+            type: 'sequence',
+            question: 'Urutkan jumlah juz Al-Quran yang dibaca 3 santri dari yang TERBANYAK ke SEDIKIT: Ali (24 juz), Hasan (30 juz), Zaid (18 juz).',
+            options: [
+                'Hasan, Ali, Zaid',
+                'Zaid, Ali, Hasan',
+                'Ali, Hasan, Zaid',
+                'Hasan, Zaid, Ali'
+            ],
+            answer: 0,
+            explanation: 'Urutan bilangannya: 30 (Hasan) > 24 (Ali) > 18 (Zaid).'
+        },
+
+        // HOTS (Higher Order Thinking Skills) Questions
+        {
+            type: 'hots',
+            question: 'Ibu membeli 4 kantong jeruk manis untuk acara pengajian. Setiap kantong berisi 10 buah jeruk. Ibu juga memegang 4 buah jeruk di tangannya. Banyak jeruk Ibu semuanya adalah ....',
+            options: ['44', '14', '40', '48'],
+            answer: 0,
+            explanation: '4 kantong x 10 jeruk = 40 jeruk (ini adalah nilai puluhan). Ditambah 4 jeruk di tangan (nilai satuan). Jadi totalnya 44.'
+        },
+        {
+            type: 'hots',
+            question: 'Zainab memetik bunga di taman. Bunga-bunga itu bisa dikelompokkan menjadi 3 ikat sepuluhan, dan masih ada sisa 6 tangkai bunga. Lambang bilangan total bunga Zainab adalah...',
+            options: ['63', '306', '36', '30'],
+            answer: 2,
+            explanation: '3 ikat sepuluhan = 30. Sisa 6 tangkai = 6. 30 + 6 = 36.'
+        },
+        {
+            type: 'hots',
+            question: 'Aku adalah sebuah bilangan antara 20 dan 30. Angka satuanku lebih besar dari angka puluhanku. Jika angka puluhan dan satuanku dijumlahkan, hasilnya 9. Bilangan berapakah aku?',
+            options: ['25', '27', '36', '29'],
+            answer: 1,
+            explanation: 'Antara 20-30 berarti puluhannya 2. Jumlah puluhan + satuan = 9, jadi 2 + satuan = 9. Satuannya adalah 7. Bilangannya 27.'
+        },
+        {
+            type: 'hots',
+            question: 'Di masjid ada beberapa sajadah. Ustadz meminta santri mengambil sajadah ke-28, ke-30, dan ke-32. Ustadz mengambil pola melompat. Sajadah nomor berapakah yang akan diambil selanjutnya?',
+            options: ['33', '34', '35', '36'],
+            answer: 1,
+            explanation: 'Pola bilangannya melompat 2 (bilangan genap): 28, 30, 32. Setelah 32, jika ditambah 2 adalah 34.'
+        },
+        {
+            type: 'hots',
+            question: 'Sebuah panti asuhan membutuhkan 50 paket alat tulis. Saat ini sudah terkumpul sumbangan sebanyak 4 puluhan dan 2 satuan paket. Berapa paket lagi yang masih kurang?',
+            options: ['8', '12', '10', '42'],
+            answer: 0,
+            explanation: 'Sudah terkumpul: 4 puluhan + 2 satuan = 42 paket. Dibutuhkan 50. Kekurangannya adalah 50 - 42 = 8 paket.'
+        }
+    ];
+
+    let currentQuestionIndex = 0;
+    let score = 0;
+    const POINTS_PER_QUESTION = Math.round(100 / questions.length); // Calculate points dynamically
+
+    function startGame() {
+        // Reset state
+        currentQuestionIndex = 0;
+        score = 0;
+        
+        showScreen('game-screen');
+        loadQuestion();
+    }
+
+    function showScreen(screenId) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(screenId).classList.add('active');
+    }
+
+    function loadQuestion() {
+        const q = questions[currentQuestionIndex];
+        
+        // Update UI counters
+        document.getElementById('level-indicator').innerText = `SOAL ${currentQuestionIndex + 1}/15`;
+        const progress = (currentQuestionIndex / questions.length) * 100;
+        document.getElementById('progress-bar').style.width = `${progress}%`;
+
+        // Clear previous content
+        const visualAidContainer = document.getElementById('visual-aid');
+        visualAidContainer.innerHTML = '';
+        const optionsContainer = document.getElementById('options-container');
+        optionsContainer.innerHTML = '';
+
+        // Set Question Text
+        document.getElementById('question-text').innerText = q.question;
+
+        // Render Visual Aids if needed
+        if (q.type === 'visual-count') {
+            let iconsHtml = '';
+            // Max limit to prevent layout breaking if too many icons are generated
+            const renderLimit = Math.min(q.visualCount, 50); 
+            for(let i=0; i < renderLimit; i++) {
+                // Add slight random rotation for organic look
+                const rotation = Math.floor(Math.random() * 40) - 20; 
+                iconsHtml += `<span style="display:inline-block; transform: rotate(${rotation}deg); margin: 2px;">${q.visualIcon}</span>`;
+            }
+            visualAidContainer.innerHTML = iconsHtml;
+        }
+
+        // Render Options
+        if(q.options.length === 3) {
+            optionsContainer.style.gridTemplateColumns = '1fr'; 
+        } else {
+            optionsContainer.style.gridTemplateColumns = '1fr 1fr'; 
+        }
+
+        q.options.forEach((opt, index) => {
+            const btn = document.createElement('button');
+            btn.className = 'btn-wood text-sm md:text-base font-bold py-3 px-2 flex items-center justify-center text-center';
+            // If option text is long, make it span full width on small screens
+            if(opt.length > 20) btn.classList.add('col-span-2'); 
+            
+            btn.innerText = opt;
+            btn.onclick = () => checkAnswer(index, btn);
+            optionsContainer.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(selectedIndex, btnElement) {
+        const q = questions[currentQuestionIndex];
+        const isCorrect = (selectedIndex === q.answer);
+        
+        // Disable all buttons
+        const buttons = document.getElementById('options-container').querySelectorAll('button');
+        buttons.forEach(b => b.disabled = true);
+
+        // Show Feedback Modal
+        const modal = document.getElementById('feedback-modal');
+        const box = document.getElementById('feedback-box');
+        const icon = document.getElementById('feedback-icon');
+        const title = document.getElementById('feedback-title');
+        const explanation = document.getElementById('feedback-explanation');
+
+        modal.style.display = 'flex';
+        box.className = 'feedback-box ' + (isCorrect ? 'correct' : 'wrong');
+        
+        if (isCorrect) {
+            score += POINTS_PER_QUESTION;
+            icon.innerHTML = '<i class="fa-solid fa-circle-check"></i>';
+            title.innerText = 'Masya Allah, Benar!';
+            title.className = 'game-font text-3xl mb-2 text-green-500';
+            btnElement.classList.add('btn-green');
+            btnElement.classList.remove('btn-wood');
+        } else {
+            icon.innerHTML = '<i class="fa-solid fa-circle-xmark"></i>';
+            title.innerText = 'Kurang Tepat';
+            title.className = 'game-font text-3xl mb-2 text-red-500';
+            // Highlight correct answer slightly
+            buttons[q.answer].style.backgroundColor = '#7ED321';
+            buttons[q.answer].style.color = 'white';
+            buttons[q.answer].style.borderColor = '#417505';
+        }
+
+        explanation.innerText = q.explanation;
+
+        // Advance to next question after delay
+        setTimeout(() => {
+            modal.style.display = 'none';
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                endGame();
+            }
+        }, 4000); // 4 seconds delay to read longer HOTS explanations
+    }
+
+    function endGame() {
+        showScreen('result-screen');
+        
+        document.getElementById('progress-bar').style.width = '100%';
+
+        // Cap score at 100 just in case of rounding issues
+        score = Math.min(score, 100);
+
+        const scoreElement = document.getElementById('final-score');
+        const messageElement = document.getElementById('result-message');
+        
+        // Score counting animation
+        let currentDisplayScore = 0;
+        const targetScore = score;
+        const interval = setInterval(() => {
+            if(currentDisplayScore < targetScore) {
+                // Speed up counting depending on score
+                currentDisplayScore += Math.ceil(targetScore / 20); 
+                if(currentDisplayScore > targetScore) currentDisplayScore = targetScore;
+                scoreElement.innerText = currentDisplayScore;
+            } else {
+                clearInterval(interval);
+                scoreElement.innerText = targetScore;
+            }
+        }, 50);
+
+        // Feedback messages
+        if (score >= 90) {
+            messageElement.innerText = "Alhamdulillah, Mumtaz (Sempurna)! Pemahamanmu sangat luar biasa.";
+            messageElement.className = "text-xl font-bold mb-4 text-green-600";
+        } else if (score >= 70) {
+            messageElement.innerText = "Bagus sekali! Kamu sudah memahami konsepnya dengan baik. Tetap semangat!";
+            messageElement.className = "text-xl font-bold mb-4 text-blue-600";
+        } else {
+            messageElement.innerText = "Jangan menyerah, terus berlatih ya. Insya Allah kamu pasti bisa lebih baik!";
+            messageElement.className = "text-xl font-bold mb-4 text-amber-600";
+        }
+    }
+
+    function restartGame() {
+        showScreen('start-screen');
+    }
+
+    // Optional: close modal on background click (disabled here to enforce reading explanation)
+    /*
+    document.getElementById('feedback-modal').addEventListener('click', function(e) {
+        if(e.target === this) {
+            this.style.display = 'none';
+        }
+    });
+    */
+
+</script>
+</body>
+</html>
